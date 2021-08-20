@@ -1,0 +1,80 @@
+//codigo usuario
+package tarea6;
+import java_cup.runtime.Symbol;
+import java.util.ArrayList;
+import java.io.StringReader;
+
+
+//Codigo para el parser, variables, metodos
+parser code
+{:
+    //public Nodo nodo;
+    public String salida = "";
+:}
+
+//Coidgo para las acciones gramaticales
+
+action code
+{:
+    int bandera = 1;
+    String salida = "";
+:}
+
+//Declaraciones 
+terminal String NUM, MAS, POR, P_A, P_C, ID, MENOS, DIV, IGUAL, PUNTO_COMA; 
+
+
+
+// declaracion no terminales
+non terminal INICIO, s, o, variable;
+
+
+//presedencia de menor a mayor
+precedence left MAS, MENOS;
+precedence left POR, DIV;
+//precedence left MAS;
+
+
+
+start with INICIO;
+
+//Reglas Semanticas
+
+
+INICIO ::=    s {:
+                            parser.salida = salida;
+         :};
+
+s ::=    variable:a s
+        |;
+
+variable ::= ID:a IGUAL o:b PUNTO_COMA {: 
+                            salida += a+" = "+b+"\n"; 
+                            RESULT= "t"+(bandera); bandera++; 
+        :};
+
+o ::=    o:a POR o:b {: 
+                            salida += "t"+bandera+" = "+a+" * "+b+"\n"; 
+                            RESULT= "t"+(bandera); bandera++; 
+        :}
+        |o:a MAS o:b {: 
+                            salida += "t"+bandera+" = "+a+" + "+b+"\n"; 
+                            RESULT= "t"+(bandera); bandera++; 
+        :}
+        |o:a DIV o:b {: 
+                            salida += "t"+bandera+" = "+a+" / "+b+"\n"; 
+                            RESULT= "t"+(bandera); bandera++; 
+        :}
+        |o:a MENOS o:b {: 
+                            salida += "t"+bandera+" = "+a+" - "+b+"\n"; 
+                            RESULT= "t"+(bandera); bandera++; 
+        :}
+        |NUM:a {: RESULT=a; :}
+        |MENOS NUM:a {:
+                            salida += "t"+bandera+" = -"+a+"\n"; 
+                            RESULT= "t"+bandera; bandera++; 
+        :}
+        |ID:a {: RESULT=a; :}
+        |P_A o:a P_C {: RESULT=a; :};
+
+
